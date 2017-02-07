@@ -294,6 +294,11 @@
         <intent-filter>
             <action android:name="libretasks.intent.action.SHOW_WEBSITE"></action>
         </intent-filter>
+		</service>
+		<service android:name=".controller.external.actions.SpeechService">
+        <intent-filter>
+            <action android:name="libretasks.intent.action.SPEAK"></action>
+        </intent-filter>
     </service>
 		<!-- End Services that run to fire actions -->
         

@@ -55,6 +55,7 @@ import libretasks.app.controller.actions.SetScreenBrightnessAction;
 import libretasks.app.controller.actions.ShowAlertAction;
 import libretasks.app.controller.actions.ShowNotificationAction;
 import libretasks.app.controller.actions.ShowWebsiteAction;
+import libretasks.app.controller.actions.SpeechAction;
 import libretasks.app.controller.actions.TurnOffWifiAction;
 import libretasks.app.controller.actions.TurnOnWifiAction;
 import libretasks.app.controller.actions.TurnOffBluetoothAction;
@@ -131,6 +132,8 @@ public class DbMigration {
       setDefaultRules(context, db);
     case 22:
       addBluetooth(db);
+    case 23:
+      addSpeech(db);
 
       /*
        * Insert new versions before this line and do not forget to update {@code
@@ -928,5 +931,30 @@ public class DbMigration {
 
         actionDbAdapter.insert(TurnOffBluetoothAction.ACTION_NAME, appId);
 		actionDbAdapter.insert(TurnOnBluetoothAction.ACTION_NAME, appId);
+  }
+  
+  private static void addSpeech(SQLiteDatabase db) {
+		RegisteredAppDbAdapter appDbAdapter = new RegisteredAppDbAdapter(db);
+		long appId = appDbAdapter.getAppId(OmniAction.APP_NAME);
+
+		RegisteredActionDbAdapter actionDbAdapter = new RegisteredActionDbAdapter(db);
+	    RegisteredActionParameterDbAdapter actionParameterDbAdapter = new 
+	            RegisteredActionParameterDbAdapter(db);
+	    DataTypeDbAdapter dataTypeDbAdapter = new DataTypeDbAdapter(db);
+
+	    Cursor cursor = dataTypeDbAdapter.fetchAll(OmniText.DB_NAME, OmniText.class
+	            .getName());
+	        if ((cursor != null) && (cursor.getCount() > 0)) {
+	          cursor.moveToFirst();
+	        }
+	        long dataTypeIdText = CursorHelper.getLongFromCursor(cursor,
+	            DataTypeDbAdapter.KEY_DATATYPEID);
+	        if (cursor != null) {
+	          cursor.close();
+	        }
+	        
+	    long actionIdSpeak = actionDbAdapter.insert(SpeechAction.ACTION_NAME, appId);
+	    actionParameterDbAdapter.insert(SpeechAction.PARAM_MESSAGE,
+	            actionIdSpeak, dataTypeIdText);
   }
 }

@@ -57,6 +57,7 @@ import libretasks.app.controller.actions.SetScreenBrightnessAction;
 import libretasks.app.controller.actions.ShowAlertAction;
 import libretasks.app.controller.actions.ShowNotificationAction;
 import libretasks.app.controller.actions.ShowWebsiteAction;
+import libretasks.app.controller.actions.SpeechAction;
 import libretasks.app.controller.actions.TurnOffWifiAction;
 import libretasks.app.controller.actions.TurnOnWifiAction;
 import libretasks.app.controller.actions.TurnOffBluetoothAction;
@@ -183,6 +184,9 @@ public class CoreActionsDbHelper {
     } else if (appName.equals(UpdateTwitterStatusAction.APP_NAME)
         && actionName.equals(UpdateTwitterStatusAction.ACTION_NAME)) {
       return new UpdateTwitterStatusAction(actionParams);
+    } else if (appName.equals(SpeechAction.APP_NAME)
+        && actionName.equals(SpeechAction.ACTION_NAME)) {
+      return new SpeechAction(actionParams);
     } else {
     	Log.d(TAG, "doesn't catch AppName is: " + appName + " and actionName is: " + actionName);
       throw new OmnidroidException(120003, ExceptionMessageMap.getMessage(new Integer(120003)
