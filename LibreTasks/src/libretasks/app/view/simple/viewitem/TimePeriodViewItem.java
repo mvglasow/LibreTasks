@@ -78,11 +78,11 @@ public class TimePeriodViewItem extends AbstractViewItem {
     super(id, dataTypeDbID);
     mActivity = activity;
 
-    startTimePicker = new TimePicker(activity);
+    startTimePicker = new TimePicker(activity, null, 1);
     startTimePicker.setId(START_TIME_VIEW_ID);
     startTimePicker.setIs24HourView(false); // TODO (renctan): use locale info to decide on/off
 
-    endTimePicker = new TimePicker(activity);
+    endTimePicker = new TimePicker(activity, null, 1);
     endTimePicker.setId(END_TIME_VIEW_ID);
     endTimePicker.setIs24HourView(false); // TODO (renctan): use locale info to decide on/off
   }

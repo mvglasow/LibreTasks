@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="libretasks.app" android:versionCode="21"
-	android:versionName="0.5.0">
+<manifest package="libretasks.app" android:versionCode="21"
+	android:versionName="0.5.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="16" />
 
     <application android:icon="@drawable/icon" android:label="@string/libretasks"
@@ -9,7 +8,8 @@
 				
 		<!--  Start UI activity definitions. -->
 		<activity android:name=".view.simple.ActivityMain"
-                  android:label="@string/libretasks">
+                  android:label="@string/libretasks"
+                  android:theme="@android:style/Theme.DeviceDefault">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -17,7 +17,8 @@
         </activity>
         
         <activity android:name=".view.simple.ActivityChooseRootEvent"
-                  android:label="@string/choose_root_event_title">
+                  android:label="@string/choose_root_event_title"
+                  android:theme="@android:style/Theme.DeviceDefault">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -25,7 +26,8 @@
         </activity>
 
         <activity android:name=".view.simple.ActivityChooseFiltersAndActions"
-                  android:label="@string/addfilters_and_actions_title">
+                  android:label="@string/addfilters_and_actions_title"
+                  android:theme="@android:style/Theme.DeviceDefault">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -34,7 +36,7 @@
 
         <activity android:name=".view.simple.ActivityDlgLog"
                   android:label="@string/logs"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -43,7 +45,7 @@
 
         <activity android:name=".view.simple.ActivityDlgAttributes"
                   android:label="@string/attributes_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -52,7 +54,7 @@
 
         <activity android:name=".view.simple.ActivityDlgFilters"
                   android:label="@string/filters_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -61,7 +63,7 @@
 
         <activity android:name=".view.simple.ActivityDlgFilterInput"
                   android:label="@string/filter_input_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -70,7 +72,7 @@
 
         <activity android:name=".view.simple.ActivityDlgApplications"
                   android:label="@string/applications_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -79,7 +81,7 @@
 
         <activity android:name=".view.simple.ActivityDlgActions"
                   android:label="@string/actions_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -88,7 +90,7 @@
 
         <activity android:name=".view.simple.ActivityDlgActionInput"
                   android:label="@string/action_input_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -97,7 +99,7 @@
 
          <activity android:name=".view.simple.ActivityDlgApplicationLoginInput"
                   android:label="@string/login_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -105,7 +107,8 @@
         </activity>
         
         <activity android:name=".view.simple.ActivitySavedRules"
-                  android:label="@string/saved_rules_title">
+                  android:label="@string/saved_rules_title"
+                  android:theme="@android:style/Theme.DeviceDefault">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -113,7 +116,8 @@
         </activity>
 
         <activity android:name=".view.simple.ActivitySettings"
-                  android:label="@string/settings_label">
+                  android:label="@string/settings_label"
+                  android:theme="@android:style/Theme.DeviceDefault">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -122,7 +126,7 @@
 
         <activity android:name=".view.simple.ActivityDlgRuleName"
                   android:label="@string/rule_name_title"
-                  android:theme="@android:style/Theme.Dialog">
+                  android:theme="@android:style/Theme.DeviceDefault.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -130,7 +134,7 @@
         </activity>
 
         <activity android:name=".view.simple.ActivityLogs"
-                  android:theme="@android:style/Theme.NoTitleBar">
+                  android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -138,7 +142,7 @@
         </activity>
 
         <activity android:name=".view.simple.ActivityLogTabs"
-                  android:theme="@android:style/Theme.NoTitleBar">
+                  android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

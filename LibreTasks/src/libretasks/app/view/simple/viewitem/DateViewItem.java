@@ -63,7 +63,7 @@ public class DateViewItem extends AbstractViewItem {
   public DateViewItem(int id, long dataTypeDbID, Activity activity) {
     super(id, dataTypeDbID);
 
-    timePicker = new TimePicker(activity);
+    timePicker = new TimePicker(activity, null, 1);
     timePicker.setId(id);
     timePicker.setIs24HourView(false);
   }
