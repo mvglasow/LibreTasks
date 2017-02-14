@@ -139,11 +139,9 @@ public class BluetoothDeviceViewItem extends AbstractViewItem {
 	public DataType getData() throws Exception {
 		BluetoothDevice item = listViewAdapter.getItem(listView.getCheckedItemPosition());
 		if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) && (item != null)) {
-			Log.d("BluetoothDeviceViewItem", "****ALL IS WELL. Returning OmniBluetoothDevice");
 			return new OmniBluetoothDevice(((BluetoothDevice) item).getAddress());
 		}
 		else {
-			Log.e("BluetoothDeviceViewItem", "****ERROR. Selection is null.");
 			return null;
 		}
 	}
