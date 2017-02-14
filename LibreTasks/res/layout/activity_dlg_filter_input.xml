@@ -13,7 +13,8 @@
       android:id="@+id/activity_dlg_filter_input_llDynamicContent"
       android:orientation="vertical"
       android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="0dp"
+      android:layout_weight="1"
       android:paddingLeft="10px"
       android:paddingRight="10px"
       >
