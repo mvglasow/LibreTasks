@@ -38,6 +38,7 @@ import java.util.Set;
 import libretasks.app.R;
 import libretasks.app.controller.datatypes.DataType;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
+import libretasks.app.controller.util.DataTypeValidationException;
 import libretasks.app.view.simple.model.ModelAttribute;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -137,12 +138,13 @@ public class BluetoothDeviceViewItem extends AbstractViewItem {
 	@TargetApi(Build.VERSION_CODES.ECLAIR)
 	@Override
 	public DataType getData() throws Exception {
-		BluetoothDevice item = listViewAdapter.getItem(listView.getCheckedItemPosition());
+		int index = listView.getCheckedItemPosition();
+		BluetoothDevice item = ((index >= 0) && (listView.getCount() > index)) ? listViewAdapter.getItem(index) : null;
 		if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) && (item != null)) {
 			return new OmniBluetoothDevice(((BluetoothDevice) item).getAddress());
 		}
 		else {
-			return null;
+			throw new DataTypeValidationException(activity.getString(R.string.bad_list_selection));
 		}
 	}
 
@@ -154,9 +156,9 @@ public class BluetoothDeviceViewItem extends AbstractViewItem {
 	 */
 	@Override
 	public void saveState(Bundle bundle) {
-		BluetoothDevice item = listViewAdapter.getItem(listView.getCheckedItemPosition());
-		if (item != null)
-			bundle.putParcelable(String.valueOf(ID), item);
+		int index = listView.getCheckedItemPosition();
+		if ((index >= 0) && (listView.getCount() > index))
+			bundle.putParcelable(String.valueOf(ID), listViewAdapter.getItem(listView.getCheckedItemPosition()));
 	}
 
 	/* (non-Javadoc)
