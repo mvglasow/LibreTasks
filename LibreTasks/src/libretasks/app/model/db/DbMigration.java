@@ -135,9 +135,8 @@ public class DbMigration {
       setDefaultRules(context, db);
     case 22:
       addBluetooth(db);
-    case 23:
       addSpeech(db);
-    case 24:
+    case 23:
       addBluetoothDevice(db);
 
       /*
