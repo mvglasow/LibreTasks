@@ -38,6 +38,7 @@ import android.widget.TextView;
 import libretasks.app.R;
 import libretasks.app.controller.datatypes.DataType;
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniDate;
 import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
@@ -121,6 +122,10 @@ public class RuleFilterViewFactory {
         || filterDbID == AllFilterID.TIMEPERIOD_EXCEPT_EVERYDAY) {
       viewItemGroup.addViewItem(viewItemFactory.create(uiID,
           viewItemFactory.TIME_PERIOD_DATATYPE_DB_ID, activity), initData);
+    } else if (filterDbID == AllFilterID.BLUETOOTH_EQUALS || filterDbID == AllFilterID.BLUETOOTH_NOT_EQUALS) {
+    	// TODO should we add some descriptive text here? (See others)
+        viewItemGroup.addViewItem(viewItemFactory.create(uiID, viewItemFactory.BLUETOOTH_DEVICE_DATATYPE_DB_ID,
+            activity), initData);
     } else {
       throw new IllegalArgumentException("Unknown filter ID: " + filterDbID);
     }
@@ -197,5 +202,9 @@ public class RuleFilterViewFactory {
     public static final long TIMEPERIOD_EXCEPT_EVERYDAY = UIDbHelperStore.instance()
         .getFilterLookup().getDataFilterID(OmniTimePeriod.DB_NAME, OmniDate.DB_NAME,
             OmniTimePeriod.Filter.EXCEPT_EVERYDAY.toString());
+    public static final long BLUETOOTH_EQUALS = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniBluetoothDevice.DB_NAME, OmniBluetoothDevice.Filter.EQUALS.toString());
+    public static final long BLUETOOTH_NOT_EQUALS = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniBluetoothDevice.DB_NAME, OmniBluetoothDevice.Filter.NOTEQUALS.toString());
   }
 }

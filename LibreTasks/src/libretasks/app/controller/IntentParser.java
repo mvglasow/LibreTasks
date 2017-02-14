@@ -33,6 +33,8 @@
  *******************************************************************************/
 package libretasks.app.controller;
 
+import libretasks.app.controller.events.BluetoothConnectedEvent;
+import libretasks.app.controller.events.BluetoothDisconnectedEvent;
 import libretasks.app.controller.events.LocationChangedEvent;
 import libretasks.app.controller.events.InternetAvailableEvent;
 import libretasks.app.controller.events.MissedCallEvent;
@@ -90,6 +92,10 @@ public class IntentParser {
       event = new InternetAvailableEvent(intent);
     } else if (intent.getAction().equals(MissedCallEvent.ACTION_NAME)) {
       event = new MissedCallEvent(intent);
+    } else if (intent.getAction().equals(BluetoothConnectedEvent.ACTION_NAME)) {
+        event = new BluetoothConnectedEvent(intent);
+    } else if (intent.getAction().equals(BluetoothDisconnectedEvent.ACTION_NAME)) {
+        event = new BluetoothDisconnectedEvent(intent);
     } else {
       for (SystemEvent e : SystemEvent.values()) {
         if (intent.getAction().equals(e.ACTION_NAME)) {

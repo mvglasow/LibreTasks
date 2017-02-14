@@ -34,6 +34,7 @@
 package libretasks.app.view.simple.viewitem;
 
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
 import libretasks.app.controller.datatypes.OmniPasswordInput;
@@ -59,6 +60,7 @@ public class ViewItemFactory {
   public final long USER_ACCOUNT_DATATYPE_DB_ID;
   public final long DATE_DATATYPE_DB_ID;
   public final long TIME_PERIOD_DATATYPE_DB_ID;
+  public final long BLUETOOTH_DEVICE_DATATYPE_DB_ID;
 
   private ViewItemFactory() {
     DataTypeIDLookup lookup = UIDbHelperStore.instance().getDatatypeLookup();
@@ -71,6 +73,7 @@ public class ViewItemFactory {
     USER_ACCOUNT_DATATYPE_DB_ID = lookup.getDataTypeID(OmniUserAccount.DB_NAME);
     DATE_DATATYPE_DB_ID = lookup.getDataTypeID(OmniDate.DB_NAME);
     TIME_PERIOD_DATATYPE_DB_ID = lookup.getDataTypeID(OmniTimePeriod.DB_NAME);
+    BLUETOOTH_DEVICE_DATATYPE_DB_ID = lookup.getDataTypeID(OmniBluetoothDevice.DB_NAME);
   }
 
   /**
@@ -112,6 +115,8 @@ public class ViewItemFactory {
       viewItem = new TimePeriodViewItem(itemID, dataTypeID, activity);
     } else if (dataTypeID == CHECK_BOX_DATATYPE_DB_ID) {
       viewItem = new CheckBoxViewItem(itemID, dataTypeID, activity);
+    } else if (dataTypeID == BLUETOOTH_DEVICE_DATATYPE_DB_ID) {
+      viewItem = new BluetoothDeviceViewItem(itemID, dataTypeID, activity);
     } else {
       throw new IllegalArgumentException("Unknown Datatype ID: " + dataTypeID);
     }

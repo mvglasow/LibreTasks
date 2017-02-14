@@ -61,6 +61,7 @@ import libretasks.app.controller.actions.TurnOnWifiAction;
 import libretasks.app.controller.actions.TurnOffBluetoothAction;
 import libretasks.app.controller.actions.TurnOnBluetoothAction;
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniDate;
 import libretasks.app.controller.datatypes.OmniDayOfWeek;
 import libretasks.app.controller.datatypes.OmniPasswordInput;
@@ -68,6 +69,8 @@ import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
 import libretasks.app.controller.datatypes.OmniTimePeriod;
 import libretasks.app.controller.datatypes.OmniUserAccount;
+import libretasks.app.controller.events.BluetoothConnectedEvent;
+import libretasks.app.controller.events.BluetoothDisconnectedEvent;
 import libretasks.app.controller.events.LocationChangedEvent;
 import libretasks.app.controller.events.InternetAvailableEvent;
 import libretasks.app.controller.events.MissedCallEvent;
@@ -134,6 +137,8 @@ public class DbMigration {
       addBluetooth(db);
     case 23:
       addSpeech(db);
+    case 24:
+      addBluetoothDevice(db);
 
       /*
        * Insert new versions before this line and do not forget to update {@code
@@ -956,5 +961,45 @@ public class DbMigration {
 	    long actionIdSpeak = actionDbAdapter.insert(SpeechAction.ACTION_NAME, appId);
 	    actionParameterDbAdapter.insert(SpeechAction.PARAM_MESSAGE,
 	            actionIdSpeak, dataTypeIdText);
+  }
+  
+  private static void addBluetoothDevice(SQLiteDatabase db) {
+	    DataTypeDbAdapter dataTypeDbAdapter = new DataTypeDbAdapter(db);
+	    long dataTypeIdBtDevice = dataTypeDbAdapter.insert(OmniBluetoothDevice.DB_NAME,
+	    		OmniBluetoothDevice.class.getName());
+	    
+	    RegisteredAppDbAdapter appDbAdapter = new RegisteredAppDbAdapter(db);
+	    long appId = appDbAdapter.insert(BluetoothConnectedEvent.APPLICATION_NAME, "", true);
+	    // BluetoothConnectedEvent and BluetoothDisconnectedEvent share same app ID, no need to store both
+
+	    RegisteredEventDbAdapter registeredEventDbAdapter = new RegisteredEventDbAdapter(db);
+	    long eventIdBluetoothConnected = registeredEventDbAdapter.insert(BluetoothConnectedEvent.EVENT_NAME, appId);
+	    long eventIdBluetoothDisconnected = registeredEventDbAdapter.insert(BluetoothDisconnectedEvent.EVENT_NAME, appId);
+	    
+	    Cursor cursor = dataTypeDbAdapter.fetchAll(OmniText.DB_NAME, OmniText.class.getName());
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+          cursor.moveToFirst();
+        }
+        long dataTypeIdText = CursorHelper.getLongFromCursor(cursor,
+            DataTypeDbAdapter.KEY_DATATYPEID);
+        if (cursor != null) {
+          cursor.close();
+        }
+        
+	    RegisteredEventAttributeDbAdapter eventAttributeDbAdapter = new RegisteredEventAttributeDbAdapter(db);
+	    eventAttributeDbAdapter.insert(BluetoothConnectedEvent.ATTRIBUTE_BLUETOOTH_DEVICE,
+		        eventIdBluetoothConnected, dataTypeIdBtDevice);
+	    eventAttributeDbAdapter.insert(BluetoothConnectedEvent.ATTRIBUTE_BLUETOOTH_DEVICE_NAME,
+		        eventIdBluetoothConnected, dataTypeIdText);
+	    eventAttributeDbAdapter.insert(BluetoothDisconnectedEvent.ATTRIBUTE_BLUETOOTH_DEVICE,
+	        eventIdBluetoothDisconnected, dataTypeIdBtDevice);
+	    eventAttributeDbAdapter.insert(BluetoothDisconnectedEvent.ATTRIBUTE_BLUETOOTH_DEVICE_NAME,
+		        eventIdBluetoothConnected, dataTypeIdText);
+	    
+	    DataFilterDbAdapter dataFilterDbAdapter = new DataFilterDbAdapter(db);
+	    dataFilterDbAdapter.insert(OmniBluetoothDevice.Filter.EQUALS.toString(),
+	    		OmniBluetoothDevice.Filter.EQUALS.displayName, dataTypeIdBtDevice, dataTypeIdBtDevice);
+	    dataFilterDbAdapter.insert(OmniBluetoothDevice.Filter.NOTEQUALS.toString(),
+	            OmniBluetoothDevice.Filter.NOTEQUALS.displayName, dataTypeIdBtDevice, dataTypeIdBtDevice);
   }
 }

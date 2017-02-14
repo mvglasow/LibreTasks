@@ -253,6 +253,12 @@
 			<intent-filter>
 				<action android:name="MISSED_CALL"></action>
 			</intent-filter>
+			<intent-filter>
+				<action android:name="BLUETOOTH_CONNECTED"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="BLUETOOTH_DISCONNECTED"></action>
+			</intent-filter>
 		</receiver>
 
 		<!-- Services that run to fire actions -->
