@@ -993,7 +993,7 @@ public class DbMigration {
 	    eventAttributeDbAdapter.insert(BluetoothDisconnectedEvent.ATTRIBUTE_BLUETOOTH_DEVICE,
 	        eventIdBluetoothDisconnected, dataTypeIdBtDevice);
 	    eventAttributeDbAdapter.insert(BluetoothDisconnectedEvent.ATTRIBUTE_BLUETOOTH_DEVICE_NAME,
-		        eventIdBluetoothConnected, dataTypeIdText);
+		        eventIdBluetoothDisconnected, dataTypeIdText);
 	    
 	    DataFilterDbAdapter dataFilterDbAdapter = new DataFilterDbAdapter(db);
 	    dataFilterDbAdapter.insert(OmniBluetoothDevice.Filter.EQUALS.toString(),
