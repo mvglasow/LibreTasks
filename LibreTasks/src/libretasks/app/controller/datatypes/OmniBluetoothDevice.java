@@ -68,7 +68,7 @@ public class OmniBluetoothDevice extends DataType {
 		return Filter.valueOf(str.toUpperCase());
 	}
 
-	/* TODO implement
+	/*
 	 * @see libretasks.app.controller.datatypes.DataType#matchFilter(DataType.Filter, DataType)
 	 */
 	@Override
