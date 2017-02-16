@@ -116,6 +116,7 @@ public class BluetoothDeviceViewItem extends AbstractViewItem {
 					selectedDevice = device;
 			}
 		}
+		listView.setAdapter(listViewAdapter);
 		/*
 		 * This code will misbehave when editing a filter for which the device is no longer in the
 		 * list (e.g. because it was unpaired): the device will not be shown and nothing will
@@ -125,7 +126,6 @@ public class BluetoothDeviceViewItem extends AbstractViewItem {
 		 */
 		if (selectedDevice != null)
 			listView.setItemChecked(listViewAdapter.getPosition(selectedDevice), true);
-		listView.setAdapter(listViewAdapter);
 		return listView;
 	}
 
