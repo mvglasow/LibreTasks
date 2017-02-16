@@ -259,6 +259,12 @@
 			<intent-filter>
 				<action android:name="BLUETOOTH_DISCONNECTED"></action>
 			</intent-filter>
+			<intent-filter>
+				<action android:name="WIFI_CONNECTED"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="WIFI_DISCONNECTED"></action>
+			</intent-filter>
 		</receiver>
 
 		<!-- Services that run to fire actions -->

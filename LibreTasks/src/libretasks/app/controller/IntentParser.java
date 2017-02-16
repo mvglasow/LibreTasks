@@ -45,6 +45,8 @@ import libretasks.app.controller.events.ServiceAvailableEvent;
 import libretasks.app.controller.events.SystemBroadcastedEvent;
 import libretasks.app.controller.events.SystemEvent;
 import libretasks.app.controller.events.TimeTickEvent;
+import libretasks.app.controller.events.WifiConnectedEvent;
+import libretasks.app.controller.events.WifiDisconnectedEvent;
 import android.content.Intent;
 import android.util.Log;
 
@@ -96,6 +98,10 @@ public class IntentParser {
         event = new BluetoothConnectedEvent(intent);
     } else if (intent.getAction().equals(BluetoothDisconnectedEvent.ACTION_NAME)) {
         event = new BluetoothDisconnectedEvent(intent);
+    } else if (intent.getAction().equals(WifiConnectedEvent.ACTION_NAME)) {
+        event = new WifiConnectedEvent(intent);
+    } else if (intent.getAction().equals(WifiDisconnectedEvent.ACTION_NAME)) {
+        event = new WifiDisconnectedEvent(intent);
     } else {
       for (SystemEvent e : SystemEvent.values()) {
         if (intent.getAction().equals(e.ACTION_NAME)) {

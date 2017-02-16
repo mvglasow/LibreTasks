@@ -43,6 +43,7 @@ import libretasks.app.controller.datatypes.OmniDate;
 import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
 import libretasks.app.controller.datatypes.OmniTimePeriod;
+import libretasks.app.controller.datatypes.OmniWifi;
 import libretasks.app.view.simple.UIDbHelperStore;
 import libretasks.app.view.simple.model.ModelFilter;
 import libretasks.app.view.simple.model.ModelRuleFilter;
@@ -126,6 +127,10 @@ public class RuleFilterViewFactory {
     	// TODO should we add some descriptive text here? (See others)
         viewItemGroup.addViewItem(viewItemFactory.create(uiID, viewItemFactory.BLUETOOTH_DEVICE_DATATYPE_DB_ID,
             activity), initData);
+    } else if (filterDbID == AllFilterID.WIFI_EQUALS || filterDbID == AllFilterID.WIFI_NOT_EQUALS) {
+    	// TODO should we add some descriptive text here? (See others)
+        viewItemGroup.addViewItem(viewItemFactory.create(uiID, viewItemFactory.WIFI_DATATYPE_DB_ID,
+            activity), initData);
     } else {
       throw new IllegalArgumentException("Unknown filter ID: " + filterDbID);
     }
@@ -206,5 +211,9 @@ public class RuleFilterViewFactory {
             .getDataFilterID(OmniBluetoothDevice.DB_NAME, OmniBluetoothDevice.Filter.EQUALS.toString());
     public static final long BLUETOOTH_NOT_EQUALS = UIDbHelperStore.instance().getFilterLookup()
             .getDataFilterID(OmniBluetoothDevice.DB_NAME, OmniBluetoothDevice.Filter.NOTEQUALS.toString());
+    public static final long WIFI_EQUALS = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniWifi.DB_NAME, OmniWifi.Filter.EQUALS.toString());
+    public static final long WIFI_NOT_EQUALS = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniWifi.DB_NAME, OmniWifi.Filter.NOTEQUALS.toString());
   }
 }

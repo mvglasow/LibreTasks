@@ -42,6 +42,7 @@ import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
 import libretasks.app.controller.datatypes.OmniTimePeriod;
 import libretasks.app.controller.datatypes.OmniUserAccount;
+import libretasks.app.controller.datatypes.OmniWifi;
 import libretasks.app.model.DataTypeIDLookup;
 import libretasks.app.view.simple.UIDbHelperStore;
 import android.app.Activity;
@@ -61,6 +62,7 @@ public class ViewItemFactory {
   public final long DATE_DATATYPE_DB_ID;
   public final long TIME_PERIOD_DATATYPE_DB_ID;
   public final long BLUETOOTH_DEVICE_DATATYPE_DB_ID;
+  public final long WIFI_DATATYPE_DB_ID;
 
   private ViewItemFactory() {
     DataTypeIDLookup lookup = UIDbHelperStore.instance().getDatatypeLookup();
@@ -74,6 +76,7 @@ public class ViewItemFactory {
     DATE_DATATYPE_DB_ID = lookup.getDataTypeID(OmniDate.DB_NAME);
     TIME_PERIOD_DATATYPE_DB_ID = lookup.getDataTypeID(OmniTimePeriod.DB_NAME);
     BLUETOOTH_DEVICE_DATATYPE_DB_ID = lookup.getDataTypeID(OmniBluetoothDevice.DB_NAME);
+    WIFI_DATATYPE_DB_ID = lookup.getDataTypeID(OmniWifi.DB_NAME);
   }
 
   /**
@@ -117,6 +120,8 @@ public class ViewItemFactory {
       viewItem = new CheckBoxViewItem(itemID, dataTypeID, activity);
     } else if (dataTypeID == BLUETOOTH_DEVICE_DATATYPE_DB_ID) {
       viewItem = new BluetoothDeviceViewItem(itemID, dataTypeID, activity);
+    } else if (dataTypeID == WIFI_DATATYPE_DB_ID) {
+        viewItem = new WifiViewItem(itemID, dataTypeID, activity);
     } else {
       throw new IllegalArgumentException("Unknown Datatype ID: " + dataTypeID);
     }

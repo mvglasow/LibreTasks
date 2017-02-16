@@ -69,6 +69,7 @@ import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
 import libretasks.app.controller.datatypes.OmniTimePeriod;
 import libretasks.app.controller.datatypes.OmniUserAccount;
+import libretasks.app.controller.datatypes.OmniWifi;
 import libretasks.app.controller.events.BluetoothConnectedEvent;
 import libretasks.app.controller.events.BluetoothDisconnectedEvent;
 import libretasks.app.controller.events.LocationChangedEvent;
@@ -81,6 +82,8 @@ import libretasks.app.controller.events.SMSReceivedEvent;
 import libretasks.app.controller.events.ServiceAvailableEvent;
 import libretasks.app.controller.events.SystemEvent;
 import libretasks.app.controller.events.TimeTickEvent;
+import libretasks.app.controller.events.WifiConnectedEvent;
+import libretasks.app.controller.events.WifiDisconnectedEvent;
 import libretasks.app.model.CursorHelper;
 
 /**
@@ -138,6 +141,8 @@ public class DbMigration {
       addSpeech(db);
     case 23:
       addBluetoothDevice(db);
+    case 24:
+      addWifi(db);
 
       /*
        * Insert new versions before this line and do not forget to update {@code
@@ -1000,5 +1005,45 @@ public class DbMigration {
 	    		OmniBluetoothDevice.Filter.EQUALS.displayName, dataTypeIdBtDevice, dataTypeIdBtDevice);
 	    dataFilterDbAdapter.insert(OmniBluetoothDevice.Filter.NOTEQUALS.toString(),
 	            OmniBluetoothDevice.Filter.NOTEQUALS.displayName, dataTypeIdBtDevice, dataTypeIdBtDevice);
+  }
+  
+  private static void addWifi(SQLiteDatabase db) {
+	    DataTypeDbAdapter dataTypeDbAdapter = new DataTypeDbAdapter(db);
+	    long dataTypeIdWifi = dataTypeDbAdapter.insert(OmniWifi.DB_NAME,
+	    		OmniWifi.class.getName());
+	    
+	    RegisteredAppDbAdapter appDbAdapter = new RegisteredAppDbAdapter(db);
+	    long appId = appDbAdapter.insert(WifiConnectedEvent.APPLICATION_NAME, "", true);
+	    // WifiConnectedEvent and WifiDisconnectedEvent share same app ID, no need to store both
+
+	    RegisteredEventDbAdapter registeredEventDbAdapter = new RegisteredEventDbAdapter(db);
+	    long eventIdWifiConnected = registeredEventDbAdapter.insert(WifiConnectedEvent.EVENT_NAME, appId);
+	    long eventIdWifiDisconnected = registeredEventDbAdapter.insert(WifiDisconnectedEvent.EVENT_NAME, appId);
+	    
+	    Cursor cursor = dataTypeDbAdapter.fetchAll(OmniText.DB_NAME, OmniText.class.getName());
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+          cursor.moveToFirst();
+        }
+        long dataTypeIdText = CursorHelper.getLongFromCursor(cursor,
+            DataTypeDbAdapter.KEY_DATATYPEID);
+        if (cursor != null) {
+          cursor.close();
+        }
+        
+	    RegisteredEventAttributeDbAdapter eventAttributeDbAdapter = new RegisteredEventAttributeDbAdapter(db);
+	    eventAttributeDbAdapter.insert(WifiConnectedEvent.ATTRIBUTE_WIFI,
+	    		eventIdWifiConnected, dataTypeIdWifi);
+	    eventAttributeDbAdapter.insert(WifiConnectedEvent.ATTRIBUTE_WIFI_SSID,
+	    		eventIdWifiConnected, dataTypeIdText);
+	    eventAttributeDbAdapter.insert(WifiDisconnectedEvent.ATTRIBUTE_WIFI,
+	    		eventIdWifiDisconnected, dataTypeIdWifi);
+	    eventAttributeDbAdapter.insert(WifiDisconnectedEvent.ATTRIBUTE_WIFI_SSID,
+	    		eventIdWifiDisconnected, dataTypeIdText);
+	    
+	    DataFilterDbAdapter dataFilterDbAdapter = new DataFilterDbAdapter(db);
+	    dataFilterDbAdapter.insert(OmniWifi.Filter.EQUALS.toString(),
+	    		OmniWifi.Filter.EQUALS.displayName, dataTypeIdWifi, dataTypeIdWifi);
+	    dataFilterDbAdapter.insert(OmniWifi.Filter.NOTEQUALS.toString(),
+	            OmniWifi.Filter.NOTEQUALS.displayName, dataTypeIdWifi, dataTypeIdWifi);
   }
 }
