@@ -33,6 +33,16 @@
  *******************************************************************************/
 package libretasks.app.controller.datatypes;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Stack;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
+
+import android.util.Xml;
 import libretasks.app.controller.util.DataTypeValidationException;
 
 /**
@@ -43,12 +53,9 @@ public class OmniWifi extends DataType {
 	private String bssid = null;
 
 	/* Tags for XML marshaling */
-	private static final String omniWifiOpenTag = "<omniWifi>";
-	private static final String omniWifiCloseTag = "</omniWifi>";
-	private static final String ssidOpenTag = "<ssid>";
-	private static final String ssidCloseTag = "</ssid>";
-	private static final String bssidOpenTag = "<bssid>";
-	private static final String bssidCloseTag = "</bssid>";
+	private static final String omniWifiTag = "omniWifi";
+	private static final String ssidTag = "ssid";
+	private static final String bssidTag = "bssid";
 
 	/* data type name to be stored in db */
 	public static final String DB_NAME = "WifiNetwork";
@@ -86,7 +93,6 @@ public class OmniWifi extends DataType {
 	 * @throws DataTypeValidationException
 	 *           if {@code ssid} is null.
 	 */
-	// TODO validate BSSID
 	public OmniWifi(String ssid, String bssid) throws DataTypeValidationException {
 		if (ssid == null)
 			throw new DataTypeValidationException("SSID cannot be null");
@@ -99,86 +105,52 @@ public class OmniWifi extends DataType {
 		this.bssid = wifi.bssid;
 	}
 
-	/*
-	 * TODO the parser methods were copied from OmniArea. Unless we switch to standard XML parsing
-	 * methods, we might want to move these methods somewhere central (e.g. DataType) so all
-	 * DataType subclasses can use them.
-	 */
-
-	/**
-	 * Parses out the text located between first occurrences of the open and closed tags.
-	 * 
-	 * @param parseString
-	 *          string to parse
-	 * @param openTag
-	 *          the opening tag
-	 * @param closeTag
-	 *          the closing tag
-	 * @return text located between first occurrences of the first open and closed tags, or null if
-	 *         proper tags are not found.
-	 */
-	private static String parseTagValue(String parseString, String openTag, String closeTag) {
-		// TODO (dvo203): Replace by standard XML parsing methods.
-		int beg, end;
-
-		beg = parseString.indexOf(openTag);
-		end = parseString.indexOf(closeTag);
-		if (beg < 0 || end < 0) {
-			return null;
-		}
-		if (beg > end) {
-			return null;
-		}
-		if (beg + openTag.length() == end) {
-			return "";
-		}
-
-		return parseString.substring(beg + openTag.length(), end);
-	}
-
-	/**
-	 * Parses out text located between first occurrences of the open and closed tags.
-	 * 
-	 * @param parseString
-	 *          string to parse
-	 * @param openTag
-	 *          the opening tag
-	 * @param closeTag
-	 *          the closing tag
-	 * @param exception
-	 *          exception to throw in case of conversion error.
-	 * @return text located between first occurrences of the open and closed tags.
-	 * @throws DataTypeValidationException
-	 *           if proper tags are not found.
-	 */
-	private static String parseStringValue(String parseString, String openTag, String closeTag,
-			DataTypeValidationException exception) throws DataTypeValidationException {
-		// Temporary variable that holds the text of the parsed tag
-		String tagValue;
-		tagValue = parseTagValue(parseString, openTag, closeTag);
-		if (tagValue == null) {
-			throw exception;
-		}
-		return tagValue;
-	}
-
 	private static OmniWifi parseOmniWifi(String omniWifiString) throws DataTypeValidationException {
 		final DataTypeValidationException validationFailed = new DataTypeValidationException(
 				"String is not an OmniWifi.");
-
-		// Parse OmniWifi
-		String omniWifiBody = parseStringValue(omniWifiString, omniWifiOpenTag, omniWifiCloseTag,
-				validationFailed);
-
-		// Parse SSID
-		String ssid = parseStringValue(omniWifiBody, ssidOpenTag, ssidCloseTag,
-				validationFailed);
-		// TODO unescape SSID
-
-		// Parse BSSID
-		String bssid = parseTagValue(omniWifiBody, bssidOpenTag, bssidCloseTag);
-		// TODO flag invalid BSSIDs
-
+		
+		String ssid = null;
+		String bssid = null;
+		
+		XmlPullParser parser = Xml.newPullParser();
+		StringReader reader = new StringReader(omniWifiString);
+		Stack<String> tagStack = new Stack<String>();
+		
+		try {
+			parser.setInput(reader);
+			int eventType = parser.getEventType();
+			while (eventType != XmlPullParser.END_DOCUMENT) {
+				if (eventType == XmlPullParser.START_TAG) {
+					// start tag found, store it
+					tagStack.push(parser.getName());
+				} else if (eventType == XmlPullParser.END_TAG) {
+					// end tag found, pop from stack (exception if it doesn't match the top element)
+					if (tagStack.empty() || !tagStack.pop().equals(parser.getName()))
+						throw validationFailed;
+				} else if (eventType == XmlPullParser.TEXT) {
+					// text found, parse it
+					if ((tagStack.size() < 2) || !tagStack.get(0).equals(omniWifiTag))
+						throw validationFailed;
+					if (tagStack.get(1).equals(ssidTag)) {
+						if (tagStack.size() == 2)
+							ssid = parser.getText();
+					} else if (tagStack.get(1).equals(bssidTag)) {
+						if (tagStack.size() == 2)
+							bssid = parser.getText();
+					}
+				}
+				eventType = parser.next();
+			}
+		} catch (XmlPullParserException e) {
+			e.printStackTrace();
+			throw validationFailed;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw validationFailed;
+		} finally {
+			reader.close();
+		}
+		
 		// create and return OmniWifi object
 		return new OmniWifi(ssid, bssid);
 	}
@@ -253,11 +225,32 @@ public class OmniWifi extends DataType {
 	 */
 	@Override
 	public String toString() {
-		// FIXME properly escape characters in the SSID
-		String omniWifiBody = "";
-		if (bssid != null)
-			omniWifiBody = omniWifiBody + bssidOpenTag + bssid + bssidCloseTag;
-		omniWifiBody = omniWifiBody + ssidOpenTag + ssid + ssidCloseTag;
-		return omniWifiOpenTag + omniWifiBody + omniWifiCloseTag;
+		XmlSerializer serializer = Xml.newSerializer();
+		StringWriter writer = new StringWriter();
+		try {
+			serializer.setOutput(writer);
+			serializer.startTag(null, omniWifiTag);
+			serializer.startTag(null, ssidTag);
+			serializer.text(ssid);
+			serializer.endTag(null, ssidTag);
+			if (bssid != null) {
+				serializer.startTag(null, bssidTag);
+				serializer.text(bssid);
+				serializer.endTag(null, bssid);
+			}
+			serializer.endTag(null, omniWifiTag);
+			serializer.endDocument();
+			return writer.toString();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
