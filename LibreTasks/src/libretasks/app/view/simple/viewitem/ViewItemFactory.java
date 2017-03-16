@@ -37,6 +37,7 @@ import libretasks.app.controller.datatypes.OmniArea;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
+import libretasks.app.controller.datatypes.OmniDayOfWeek;
 import libretasks.app.controller.datatypes.OmniPasswordInput;
 import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
@@ -61,6 +62,7 @@ public class ViewItemFactory {
   public final long USER_ACCOUNT_DATATYPE_DB_ID;
   public final long DATE_DATATYPE_DB_ID;
   public final long TIME_PERIOD_DATATYPE_DB_ID;
+  public final long WEEKDAY_DATATYPE_DB_ID;
   public final long BLUETOOTH_DEVICE_DATATYPE_DB_ID;
   public final long WIFI_DATATYPE_DB_ID;
 
@@ -75,6 +77,7 @@ public class ViewItemFactory {
     USER_ACCOUNT_DATATYPE_DB_ID = lookup.getDataTypeID(OmniUserAccount.DB_NAME);
     DATE_DATATYPE_DB_ID = lookup.getDataTypeID(OmniDate.DB_NAME);
     TIME_PERIOD_DATATYPE_DB_ID = lookup.getDataTypeID(OmniTimePeriod.DB_NAME);
+    WEEKDAY_DATATYPE_DB_ID = lookup.getDataTypeID(OmniDayOfWeek.DB_NAME);
     BLUETOOTH_DEVICE_DATATYPE_DB_ID = lookup.getDataTypeID(OmniBluetoothDevice.DB_NAME);
     WIFI_DATATYPE_DB_ID = lookup.getDataTypeID(OmniWifi.DB_NAME);
   }
@@ -116,6 +119,8 @@ public class ViewItemFactory {
       viewItem = new DateViewItem(itemID, dataTypeID, activity);
     } else if (dataTypeID == TIME_PERIOD_DATATYPE_DB_ID) {
       viewItem = new TimePeriodViewItem(itemID, dataTypeID, activity);
+    } else if (dataTypeID == WEEKDAY_DATATYPE_DB_ID) {
+      viewItem = new DayOfWeekViewItem(itemID, dataTypeID, activity);
     } else if (dataTypeID == CHECK_BOX_DATATYPE_DB_ID) {
       viewItem = new CheckBoxViewItem(itemID, dataTypeID, activity);
     } else if (dataTypeID == BLUETOOTH_DEVICE_DATATYPE_DB_ID) {

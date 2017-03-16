@@ -41,6 +41,7 @@ import libretasks.app.controller.datatypes.OmniArea;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
+import libretasks.app.controller.datatypes.OmniDayOfWeek;
 import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
 import libretasks.app.controller.datatypes.OmniTimePeriod;
@@ -125,6 +126,9 @@ public class RuleFilterViewFactory {
         || filterDbID == AllFilterID.TIMEPERIOD_EXCEPT_EVERYDAY) {
       viewItemGroup.addViewItem(viewItemFactory.create(uiID,
           viewItemFactory.TIME_PERIOD_DATATYPE_DB_ID, activity), initData);
+    } else if (filterDbID == AllFilterID.DATE_IS_DAYOFWEEK) {
+      viewItemGroup.addViewItem(viewItemFactory.create(uiID,
+          viewItemFactory.WEEKDAY_DATATYPE_DB_ID, activity), initData);
     } else if (filterDbID == AllFilterID.BLUETOOTH_EQUALS || filterDbID == AllFilterID.BLUETOOTH_NOT_EQUALS) {
     	// TODO should we add some descriptive text here? (See others)
         viewItemGroup.addViewItem(viewItemFactory.create(uiID, viewItemFactory.BLUETOOTH_DEVICE_DATATYPE_DB_ID,
@@ -203,6 +207,9 @@ public class RuleFilterViewFactory {
     public static final long DATE_EXCEPT_EVERYDAY = UIDbHelperStore.instance().getFilterLookup()
         .getDataFilterID(OmniDate.DB_NAME, OmniTimePeriod.DB_NAME,
             OmniDate.Filter.EXCEPT_EVERYDAY.toString());
+    public static final long DATE_IS_DAYOFWEEK = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniDate.DB_NAME, OmniDayOfWeek.DB_NAME,
+                OmniDate.Filter.ISDAYOFWEEK.toString());
     public static final long TIMEPERIOD_DURING = UIDbHelperStore.instance().getFilterLookup()
         .getDataFilterID(OmniTimePeriod.DB_NAME, OmniDate.DB_NAME,
             OmniTimePeriod.Filter.DURING.toString());
