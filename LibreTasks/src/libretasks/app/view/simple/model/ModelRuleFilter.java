@@ -69,10 +69,16 @@ public class ModelRuleFilter extends ModelItem {
   @Override
   public String getDescriptionShort() {
     if (modelFilter.getAttribute() == null) {
-      return modelFilter.getTypeName() + ": " + filterData.getValue();
+      if (filterData == null)
+        return modelFilter.getTypeName();
+      else
+        return modelFilter.getTypeName() + ": " + filterData.getValue();
     } else {
-      return modelFilter.getAttribute().getDescriptionShort() + " " + modelFilter.getTypeName()
-          + ": " + filterData.getValue();
+      if (filterData == null)
+        return modelFilter.getAttribute().getDescriptionShort() + " " + modelFilter.getTypeName();
+      else
+        return modelFilter.getAttribute().getDescriptionShort() + " " + modelFilter.getTypeName()
+            + ": " + filterData.getValue();
     }
   }
 }

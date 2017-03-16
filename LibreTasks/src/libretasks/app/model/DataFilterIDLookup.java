@@ -134,13 +134,16 @@ public class DataFilterIDLookup {
     cursor.close();
     
     // Try to find compareDataTypeID
-    long compareDataTypeID = -1;
-    cursor = dataTypeDbAdapter.fetchAll(compareDataTypeName, null);
-    if (cursor.getCount() > 0) {
-      cursor.moveToFirst();
-      compareDataTypeID = cursor.getLong(cursor.getColumnIndex(DataTypeDbAdapter.KEY_DATATYPEID));
-    }
-    cursor.close();
+    Long compareDataTypeID = (long) -1;
+    if (compareDataTypeName != null) {
+      cursor = dataTypeDbAdapter.fetchAll(compareDataTypeName, null);
+      if (cursor.getCount() > 0) {
+        cursor.moveToFirst();
+        compareDataTypeID = cursor.getLong(cursor.getColumnIndex(DataTypeDbAdapter.KEY_DATATYPEID));
+      }
+      cursor.close();
+    } else
+      compareDataTypeID = null;
 
     // Try to find dataFilterID
     long dataFilterID = -1;

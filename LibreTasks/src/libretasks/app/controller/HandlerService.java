@@ -36,6 +36,7 @@ package libretasks.app.controller;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -43,8 +44,11 @@ import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.IBinder;
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
 import libretasks.app.controller.events.InternetAvailableEvent;
 import libretasks.app.controller.events.ServiceAvailableEvent;
@@ -237,6 +241,10 @@ public class HandlerService extends Service {
     if (!intent.hasExtra(Event.ATTRIBUTE_LOCATION)) {
       insertLocationData(intent);
     }
+
+    if (!intent.hasExtra(Event.ATTRIBUTE_HEADSET)) {
+      insertHeadsetState(intent);
+    }
   }
 
   /**
@@ -288,6 +296,27 @@ public class HandlerService extends Service {
     intent.putExtra(Event.ATTRIBUTE_LOCATION, locationData);
   }
   
+  /**
+   * Insert headset state (present/not present) to the intent.
+   * 
+   * @param intent
+   *          the intent to modify
+   */
+  @SuppressWarnings("deprecation")
+  @TargetApi(Build.VERSION_CODES.ECLAIR)
+  private void insertHeadsetState(Intent intent) {
+	AudioManager manager = (AudioManager) this.getSystemService(AUDIO_SERVICE);
+	Boolean state = false;
+	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+      state = (manager.isWiredHeadsetOn() || manager.isBluetoothA2dpOn());
+	} else {
+	  state = manager.isBluetoothA2dpOn();
+	}
+    OmniCheckBoxInput omniState = new OmniCheckBoxInput(state);
+
+    intent.putExtra(Event.ATTRIBUTE_HEADSET, omniState.toString());
+  }
+
   /**
    * @see android.app.Service#onBind(Intent)
    */

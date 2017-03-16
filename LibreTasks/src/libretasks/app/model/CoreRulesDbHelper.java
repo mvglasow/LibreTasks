@@ -268,7 +268,7 @@ public class CoreRulesDbHelper {
 
     long filterOnDataTypeID = CursorHelper.getLongFromCursor(cursor,
         DataFilterDbAdapter.KEY_FILTERONDATATYPEID);
-    long compareWithDataTypeID = CursorHelper.getLongFromCursor(cursor,
+    Long compareWithDataTypeID = CursorHelper.getLongFromCursor(cursor,
         DataFilterDbAdapter.KEY_COMPAREWITHDATATYPEID);
 
     // Gets the OmniType of the event attribute to be compared
@@ -277,9 +277,12 @@ public class CoreRulesDbHelper {
         DataTypeDbAdapter.KEY_DATATYPECLASSNAME);
 
     // Gets the OmniType of the user filter data
-    cursor = filterDataTypeDbAdapter.fetch(compareWithDataTypeID);
-    String compareWithDataType = CursorHelper.getStringFromCursor(cursor,
-        DataTypeDbAdapter.KEY_DATATYPECLASSNAME);
+    String compareWithDataType = null;
+    if (compareWithDataTypeID != null) {
+        cursor = filterDataTypeDbAdapter.fetch(compareWithDataTypeID);
+        compareWithDataType = CursorHelper.getStringFromCursor(cursor,
+            DataTypeDbAdapter.KEY_DATATYPECLASSNAME);
+    }
 
     // Gets the data to be compared using this filter
     String data = CursorHelper.getStringFromCursor(filterRecord,

@@ -58,17 +58,17 @@ public class Filter {
    *          the Omnidroid class name of the data type of the event attribute field
    * @param filter
    *          the comparison to be made between the event attribute and the user filter data
-   * @param compareWithDataTyp
-   *          the Omnidroid class name of the data type of the user filter data
+   * @param compareWithDataType
+   *          the Omnidroid class name of the data type of the user filter data (can be null)
    * @param compareWithdata
-   *          the user defined data to check against the event attribute
+   *          the user defined data to check against the event attribute (can be null iff compareWithDataType is null)
    * @throws IllegalArgumentException
-   *           if any parameters are null
+   *           if any non-nullable parameters are null
    */
   public Filter(String eventAttribute, String filterOnDataType, String filter,
       String compareWithDataType, String compareWithdata) {
     if (eventAttribute == null || filterOnDataType == null || filter == null
-        || compareWithDataType == null || compareWithdata == null) {
+        || (compareWithDataType != null && compareWithdata == null)) {
       throw new IllegalArgumentException();
     }
     this.eventAttribute = eventAttribute;
@@ -92,7 +92,9 @@ public class Filter {
     DataType.Filter comparisonFilter = FactoryDataType.getFilterFromString(filterOnDataType,
         filter);
     Log.d("match", "filterOnDataType is : " + filterOnDataType + " comparison is : " + filter);
-    DataType rightHandSide = FactoryDataType.createObject(compareWithDataType, compareWithData);
+    DataType rightHandSide = null;
+    if (compareWithDataType != null)
+      rightHandSide = FactoryDataType.createObject(compareWithDataType, compareWithData);
     return leftHandSide.matchFilter(comparisonFilter, rightHandSide);
   }
 
@@ -116,8 +118,12 @@ public class Filter {
     result = 37 * result + eventAttribute.hashCode();
     result = 37 * result + filterOnDataType.hashCode();
     result = 37 * result + filter.hashCode();
-    result = 37 * result + compareWithDataType.hashCode();
-    result = 37 * result + compareWithData.hashCode();
+    result = 37 * result;
+    if (compareWithDataType != null)
+      result += compareWithDataType.hashCode();
+    result = 37 * result;
+    if (compareWithData != null)
+      result += compareWithData.hashCode();
     return result;
   }
 }

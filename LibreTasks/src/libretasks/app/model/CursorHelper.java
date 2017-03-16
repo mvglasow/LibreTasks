@@ -51,7 +51,9 @@ public class CursorHelper {
    * 
    * @return integer value of the specific column within the cursor
    */
-  public static int getIntFromCursor(Cursor cursor, String columnName) {
+  public static Integer getIntFromCursor(Cursor cursor, String columnName) {
+    if (cursor.isNull(cursor.getColumnIndex(columnName)))
+      return null;
     return cursor.getInt(cursor.getColumnIndex(columnName));
   }
 
@@ -67,6 +69,8 @@ public class CursorHelper {
    * @return String value of the specific column within the cursor
    */
   public static String getStringFromCursor(Cursor cursor, String columnName) {
+    if (cursor.isNull(cursor.getColumnIndex(columnName)))
+      return null;
     return cursor.getString(cursor.getColumnIndex(columnName));
   }
 
@@ -81,7 +85,9 @@ public class CursorHelper {
    * 
    * @return long value of the specific column within the cursor
    */
-  public static long getLongFromCursor(Cursor cursor, String columnName) {
+  public static Long getLongFromCursor(Cursor cursor, String columnName) {
+    if (cursor.isNull(cursor.getColumnIndex(columnName)))
+      return null;
     return cursor.getLong(cursor.getColumnIndex(columnName));
   }
 
@@ -96,7 +102,9 @@ public class CursorHelper {
    * 
    * @return boolean value of the specific column within the cursor
    */
-  public static boolean getBooleanFromCursor(Cursor cursor, String columnName) {
+  public static Boolean getBooleanFromCursor(Cursor cursor, String columnName) {
+    if (cursor.isNull(cursor.getColumnIndex(columnName)))
+      return null;
     return cursor.getInt(cursor.getColumnIndex(columnName)) == 1;
   }
 

@@ -619,11 +619,13 @@ public class UIDbHelper {
       String filterName = dataFilterNames.get(filterID);
 
       Cursor cursorFilter = dataFilterDbAdapter.fetch(filterID);
-      long compareWithDataTypeId = getLongFromCursor(cursorFilter,
+      Long compareWithDataTypeId = getLongFromCursor(cursorFilter,
           DataFilterDbAdapter.KEY_COMPAREWITHDATATYPEID);
 
       // Construct a data type object
-      DataType filterData = getDataType(compareWithDataTypeId, filterInputFromUser);
+      DataType filterData = null;
+      if (compareWithDataTypeId != null)
+        filterData = getDataType(compareWithDataTypeId, filterInputFromUser);
 
       Log.d("addFiltersToRuleNode", "The object constructed is : " + filterData);
 
@@ -785,7 +787,8 @@ public class UIDbHelper {
     long ruleFilterID = ruleFilterDbAdapter.insert(ruleID, filter.getModelFilter().getAttribute()
         .getDatabaseId(), -1L, // TODO(ehotou) after implementing external, insert it here
         // TODO: (ehotou) verify ModelFilter id is what we want here (not ModelRuleFilter):
-        filter.getModelFilter().getDatabaseId(), parentRuleNodeID, filter.getData().toString());
+        filter.getModelFilter().getDatabaseId(), parentRuleNodeID,
+        filter.getData() != null ? filter.getData().toString() : null);
 
     // insert all children filters recursively:
     for (RuleNode filterNode : node.getChildren()) {

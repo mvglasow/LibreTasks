@@ -103,7 +103,8 @@ public class DataFilterDbAdapter extends DbAdapter {
    *          is the id of data type it filters on.
    * 
    * @param compareWithDataTypeID
-   *          is the id of data type it compares to
+   *          is the id of data type it compares to (can be null for filters which have no value
+   *          to compare to, such as filtering for true or false)
    *          
    * @return dataFilterID or -1 if creation failed.
    * 
@@ -113,7 +114,7 @@ public class DataFilterDbAdapter extends DbAdapter {
   public long insert(String dataFilterName, String dataFilterDisplayName, Long filterOnDataTypeID, 
       Long compareWithDataTypeID) {
     if (dataFilterName == null || dataFilterDisplayName == null || 
-        filterOnDataTypeID == null || compareWithDataTypeID == null) {
+        filterOnDataTypeID == null) {
       throw new IllegalArgumentException("insert parameter null.");
     }
     ContentValues initialValues = new ContentValues();

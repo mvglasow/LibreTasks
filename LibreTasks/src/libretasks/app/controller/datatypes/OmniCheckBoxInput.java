@@ -33,6 +33,10 @@
  *******************************************************************************/
 package libretasks.app.controller.datatypes;
 
+import static android.telephony.PhoneNumberUtils.compare;
+import android.util.Log;
+import libretasks.app.controller.datatypes.OmniDate.Filter;
+
 /**
  * Provides data type for storing a check box input.
  */
@@ -42,9 +46,23 @@ public class OmniCheckBoxInput extends DataType {
   /* data type name to be stored in db */
   public static final String DB_NAME = "CheckBoxInput";
 
+  public enum Filter implements DataType.Filter {
+    IS_TRUE("is true"), IS_FALSE("is false");
+    
+    public final String displayName;
+    
+    Filter(String displayName) {
+      this.displayName = displayName;
+    }
+  }
+
   public OmniCheckBoxInput(Boolean value) {
     this.value = value;
   
+  }
+
+  public OmniCheckBoxInput(String value) {
+    this.value = Boolean.parseBoolean(value);
   }
 
   @Override
@@ -52,10 +70,33 @@ public class OmniCheckBoxInput extends DataType {
     return value.toString();
   }
 
+  /**
+   * Returns Filter represented by filterName.
+   * 
+   * @param filterName
+   *          the filter name.
+   * @return Filter represented by filterName
+   * @throws IllegalArgumentException
+   *           when the filter with the given name does not exist.
+   */
+  public static Filter getFilterFromString(String filterName) throws IllegalArgumentException {
+    return Filter.valueOf(filterName.toUpperCase());
+  }
+
   @Override
-  public boolean matchFilter(Filter filter, DataType userDefinedValue)
+  public boolean matchFilter(DataType.Filter filter, DataType userDefinedValue)
           throws IllegalArgumentException {
-    return false;
+    if (filter == null || !(filter instanceof Filter)){
+      throw new IllegalArgumentException("Invalid filter "+filter+" provided.");
+    }
+    switch ((Filter) filter) {
+    case IS_TRUE:
+      return value;
+    case IS_FALSE:
+      return !value;
+    default:
+      return false;
+    }
   }
 
   @Override

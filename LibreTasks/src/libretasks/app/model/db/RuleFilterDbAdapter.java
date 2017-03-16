@@ -34,6 +34,7 @@
 package libretasks.app.model.db;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -76,6 +77,7 @@ public class RuleFilterDbAdapter extends DbAdapter {
 
   /* Table name */
   private static final String DATABASE_TABLE = "RuleFilters";
+  private static final String DATABASE_TABLE_OLD = "RuleFiltersOld";
 
   /* Create and drop statement. */
   protected static final String DATABASE_CREATE = "create table " + DATABASE_TABLE + " ("
@@ -86,6 +88,17 @@ public class RuleFilterDbAdapter extends DbAdapter {
       + KEY_DATAFILTERID + " integer not null, "
       + KEY_PARENTRULEFILTERID + " integer not null, " 
       + KEY_RULEFILTERDATA + " text not null);";
+  protected static final String DATABASE_RENAME = "ALTER TABLE " + DATABASE_TABLE + " RENAME TO " + DATABASE_TABLE_OLD;
+  protected static final String DATABASE_CREATE_V_25 = "create table " + DATABASE_TABLE + " ("
+	      + KEY_RULEFILTERID + " integer primary key autoincrement, " 
+	      + KEY_RULEID + " integer not null, " 
+	      + KEY_EVENTATTRIBUTEID + " integer not null, "
+	      + KEY_EXTERNALATTRIBUTEID + " integer not null, " 
+	      + KEY_DATAFILTERID + " integer not null, "
+	      + KEY_PARENTRULEFILTERID + " integer not null, " 
+	      + KEY_RULEFILTERDATA + " text);";
+  protected static final String DATABASE_TRANSFER_CONTENT = "INSERT INTO " + DATABASE_TABLE + " SELECT * FROM " + DATABASE_TABLE_OLD;
+  protected static final String DATABASE_DROP_OLD = "DROP TABLE IF EXISTS " + DATABASE_TABLE_OLD;
   protected static final String DATABASE_DROP = "DROP TABLE IF EXISTS " + DATABASE_TABLE;
 
   /**
@@ -121,7 +134,7 @@ public class RuleFilterDbAdapter extends DbAdapter {
       Long dataFilterID, Long parentRuleFilterID, String ruleFilterData) {
 
     if (ruleID == null || eventAttributeID == null || externalAttributeID == null
-        || dataFilterID == null || parentRuleFilterID == null || ruleFilterData == null) {
+        || dataFilterID == null || parentRuleFilterID == null) {
       throw new IllegalArgumentException("insert parameter null.");
     }
     ContentValues initialValues = new ContentValues();
@@ -307,5 +320,58 @@ public class RuleFilterDbAdapter extends DbAdapter {
   
   public static String getSqliteCreateStatement() {
     return DATABASE_CREATE;
+  }
+  
+  public static void migrateToLatest(Context context, SQLiteDatabase db, int currentDbVersionNumber) {
+    switch (currentDbVersionNumber) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+      /*
+       * There is no simple way to drop a null constraint other than by recreating the table and
+       * copying contents, or editing the schema (both of which are equal in complexity).
+       */
+      db.beginTransaction();
+      try {
+        db.execSQL(DATABASE_RENAME);
+        db.execSQL(DATABASE_CREATE_V_25);
+        db.execSQL(DATABASE_TRANSFER_CONTENT);
+        db.execSQL(DATABASE_DROP_OLD);
+        db.setTransactionSuccessful();
+      } finally {
+        db.endTransaction();
+      }
+
+      /*
+       * Insert new versions before this line and do not forget to update {@code
+       * DbHelper.DATABASE_VERSION}. Otherwise, the constructor call on SQLiteOpenHelper will not
+       * trigger the {@code onUpgrade} callback method.
+       */
+      break;
+    default:
+      break;
+    }
   }
 }

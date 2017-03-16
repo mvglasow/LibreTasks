@@ -39,11 +39,13 @@ import libretasks.app.R;
 import libretasks.app.controller.datatypes.DataType;
 import libretasks.app.controller.datatypes.OmniArea;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
+import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
 import libretasks.app.controller.datatypes.OmniPhoneNumber;
 import libretasks.app.controller.datatypes.OmniText;
 import libretasks.app.controller.datatypes.OmniTimePeriod;
 import libretasks.app.controller.datatypes.OmniWifi;
+import libretasks.app.view.simple.RuleBuilder;
 import libretasks.app.view.simple.UIDbHelperStore;
 import libretasks.app.view.simple.model.ModelFilter;
 import libretasks.app.view.simple.model.ModelRuleFilter;
@@ -131,6 +133,12 @@ public class RuleFilterViewFactory {
     	// TODO should we add some descriptive text here? (See others)
         viewItemGroup.addViewItem(viewItemFactory.create(uiID, viewItemFactory.WIFI_DATATYPE_DB_ID,
             activity), initData);
+    } else if (filterDbID == AllFilterID.CHECK_IS_TRUE || filterDbID == AllFilterID.CHECK_IS_FALSE) {
+    	// close immediately because there is nothing to enter
+    	ModelRuleFilter filter = new ModelRuleFilter(-1, modelFilter, null);
+    	RuleBuilder.instance().setChosenRuleFilter(filter);
+    	activity.setResult(Activity.RESULT_OK);
+    	activity.finish();
     } else {
       throw new IllegalArgumentException("Unknown filter ID: " + filterDbID);
     }
@@ -215,5 +223,9 @@ public class RuleFilterViewFactory {
             .getDataFilterID(OmniWifi.DB_NAME, OmniWifi.Filter.EQUALS.toString());
     public static final long WIFI_NOT_EQUALS = UIDbHelperStore.instance().getFilterLookup()
             .getDataFilterID(OmniWifi.DB_NAME, OmniWifi.Filter.NOTEQUALS.toString());
+    public static final long CHECK_IS_TRUE = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniCheckBoxInput.DB_NAME, null, OmniCheckBoxInput.Filter.IS_TRUE.toString());
+    public static final long CHECK_IS_FALSE = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniCheckBoxInput.DB_NAME, null, OmniCheckBoxInput.Filter.IS_FALSE.toString());
   }
 }

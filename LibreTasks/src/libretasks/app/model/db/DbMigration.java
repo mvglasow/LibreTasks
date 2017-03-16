@@ -62,6 +62,7 @@ import libretasks.app.controller.actions.TurnOffBluetoothAction;
 import libretasks.app.controller.actions.TurnOnBluetoothAction;
 import libretasks.app.controller.datatypes.OmniArea;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
+import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
 import libretasks.app.controller.datatypes.OmniDayOfWeek;
 import libretasks.app.controller.datatypes.OmniPasswordInput;
@@ -143,12 +144,16 @@ public class DbMigration {
       addBluetoothDevice(db);
     case 24:
       addWifi(db);
+    case 25:
+      addGlobalHeadsetAttributes(db);
 
       /*
        * Insert new versions before this line and do not forget to update {@code
        * DbHelper.DATABASE_VERSION}. Otherwise, the constructor call on SQLiteOpenHelper will not
        * trigger the {@code onUpgrade} callback method.
        */
+      // RuleFilterDbAdapter has some complex migration logic of its own
+      RuleFilterDbAdapter.migrateToLatest(context, db, currentDbVersionNumber);
       break;
     default:
       Log.w(TAG, "Attempting to migrate from an unknown version!");
@@ -1046,4 +1051,26 @@ public class DbMigration {
 	    dataFilterDbAdapter.insert(OmniWifi.Filter.NOTEQUALS.toString(),
 	            OmniWifi.Filter.NOTEQUALS.displayName, dataTypeIdWifi, dataTypeIdWifi);
   }
+
+  /**
+   * Adds a global attribute for headset state.
+   * 
+   * @param db
+   *          the database instance to work with
+   */
+  private static void addGlobalHeadsetAttributes(SQLiteDatabase db) {
+    RegisteredEventAttributeDbAdapter eventAttributeDbAdapter = new RegisteredEventAttributeDbAdapter(db);
+
+    DataTypeDbAdapter dataTypeDbAdapter = new DataTypeDbAdapter(db);
+    
+    long dataTypeIdHeadset = dataTypeDbAdapter.insert(OmniCheckBoxInput.DB_NAME, OmniCheckBoxInput.class.getName());
+
+    eventAttributeDbAdapter.insertGeneralAttribute(Event.ATTRIBUTE_HEADSET, dataTypeIdHeadset);
+    
+    DataFilterDbAdapter dataFilterDbAdapter = new DataFilterDbAdapter(db);
+    dataFilterDbAdapter.insert(OmniCheckBoxInput.Filter.IS_TRUE.toString(),
+    		OmniCheckBoxInput.Filter.IS_TRUE.displayName, dataTypeIdHeadset, null);
+    dataFilterDbAdapter.insert(OmniCheckBoxInput.Filter.IS_FALSE.toString(),
+    		OmniCheckBoxInput.Filter.IS_FALSE.displayName, dataTypeIdHeadset, null);
+  }  
 }

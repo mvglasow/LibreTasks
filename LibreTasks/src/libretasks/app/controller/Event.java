@@ -27,6 +27,8 @@ public abstract class Event {
   // Constants used in display and attribute tags
   public static final String ATTRIBUTE_LOCATION = "Location";
   public static final String ATTRIBUTE_TIME = "Time";
+  public static final String ATTRIBUTE_HEADSET = "Headset connected";
+
 
   /** The name of the event for data lookup */
   private final String appName;
@@ -34,6 +36,7 @@ public abstract class Event {
 
   protected final String timeAttribute;
   protected final String locationAttribute;
+  protected final String headsetAttribute;
 
   /** Stores the intent that triggered this event, which contains data associated with it */
   protected final Intent intent;
@@ -59,6 +62,12 @@ public abstract class Event {
       locationAttribute = intent.getStringExtra(ATTRIBUTE_LOCATION);
     } else {
       locationAttribute = "";
+    }
+
+    if (intent.hasExtra(ATTRIBUTE_HEADSET)) {
+      headsetAttribute = intent.getStringExtra(ATTRIBUTE_HEADSET);
+    } else {
+      headsetAttribute = "";
     }
 
     this.appName = appName;
@@ -96,7 +105,9 @@ public abstract class Event {
     if (attributeName.equals(ATTRIBUTE_TIME)) {
       return timeAttribute;
     } else if (attributeName.equals(ATTRIBUTE_LOCATION)) {
-      return locationAttribute;
+        return locationAttribute;
+    } else if (attributeName.equals(ATTRIBUTE_HEADSET)) {
+        return headsetAttribute;
     } else {
       throw new IllegalArgumentException();
     }
