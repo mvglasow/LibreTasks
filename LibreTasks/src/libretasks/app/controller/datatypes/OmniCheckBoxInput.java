@@ -33,10 +33,6 @@
  *******************************************************************************/
 package libretasks.app.controller.datatypes;
 
-import static android.telephony.PhoneNumberUtils.compare;
-import android.util.Log;
-import libretasks.app.controller.datatypes.OmniDate.Filter;
-
 /**
  * Provides data type for storing a check box input.
  */
