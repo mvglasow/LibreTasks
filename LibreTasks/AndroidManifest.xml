@@ -265,6 +265,12 @@
 			<intent-filter>
 				<action android:name="WIFI_DISCONNECTED"></action>
 			</intent-filter>
+			<intent-filter>
+				<action android:name="GPS_FIX_ACQUIRED"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="GPS_FIX_LOST"></action>
+			</intent-filter>
 		</receiver>
 
 		<!-- Services that run to fire actions -->

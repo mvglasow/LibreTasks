@@ -35,6 +35,8 @@ package libretasks.app.controller;
 
 import libretasks.app.controller.events.BluetoothConnectedEvent;
 import libretasks.app.controller.events.BluetoothDisconnectedEvent;
+import libretasks.app.controller.events.GpsFixAcquiredEvent;
+import libretasks.app.controller.events.GpsFixLostEvent;
 import libretasks.app.controller.events.LocationChangedEvent;
 import libretasks.app.controller.events.InternetAvailableEvent;
 import libretasks.app.controller.events.MissedCallEvent;
@@ -102,6 +104,10 @@ public class IntentParser {
         event = new WifiConnectedEvent(intent);
     } else if (intent.getAction().equals(WifiDisconnectedEvent.ACTION_NAME)) {
         event = new WifiDisconnectedEvent(intent);
+    } else if (intent.getAction().equals(GpsFixAcquiredEvent.ACTION_NAME)) {
+        event = new GpsFixAcquiredEvent(intent);
+    } else if (intent.getAction().equals(GpsFixLostEvent.ACTION_NAME)) {
+        event = new GpsFixLostEvent(intent);
     } else {
       for (SystemEvent e : SystemEvent.values()) {
         if (intent.getAction().equals(e.ACTION_NAME)) {

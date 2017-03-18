@@ -73,6 +73,8 @@ import libretasks.app.controller.datatypes.OmniUserAccount;
 import libretasks.app.controller.datatypes.OmniWifi;
 import libretasks.app.controller.events.BluetoothConnectedEvent;
 import libretasks.app.controller.events.BluetoothDisconnectedEvent;
+import libretasks.app.controller.events.GpsFixAcquiredEvent;
+import libretasks.app.controller.events.GpsFixLostEvent;
 import libretasks.app.controller.events.LocationChangedEvent;
 import libretasks.app.controller.events.InternetAvailableEvent;
 import libretasks.app.controller.events.MissedCallEvent;
@@ -146,6 +148,8 @@ public class DbMigration {
       addWifi(db);
     case 25:
       addGlobalHeadsetAttributes(db);
+    case 26:
+      addGpsFixEvents(db);
 
       /*
        * Insert new versions before this line and do not forget to update {@code
@@ -1073,4 +1077,17 @@ public class DbMigration {
     dataFilterDbAdapter.insert(OmniCheckBoxInput.Filter.IS_FALSE.toString(),
     		OmniCheckBoxInput.Filter.IS_FALSE.displayName, dataTypeIdHeadset, null);
   }  
+
+  private static void addGpsFixEvents(SQLiteDatabase db) {
+    RegisteredAppDbAdapter registeredAppDbAdapter = new RegisteredAppDbAdapter(db);
+    Cursor cursor = registeredAppDbAdapter.fetchAll(DbHelper.AppName.GPS, null, null, null, null,
+      null);
+    cursor.moveToFirst();
+    long appId = CursorHelper.getLongFromCursor(cursor, RegisteredAppDbAdapter.KEY_APPID);
+    cursor.close();
+
+    RegisteredEventDbAdapter registeredEventDbAdapter = new RegisteredEventDbAdapter(db);
+    registeredEventDbAdapter.insert(GpsFixAcquiredEvent.EVENT_NAME, appId);
+    registeredEventDbAdapter.insert(GpsFixLostEvent.EVENT_NAME, appId);
+  }
 }

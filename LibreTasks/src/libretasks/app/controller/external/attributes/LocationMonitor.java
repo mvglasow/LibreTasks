@@ -33,8 +33,10 @@
  *******************************************************************************/
 package libretasks.app.controller.external.attributes;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,6 +44,8 @@ import android.os.Bundle;
 import android.util.Log;
 import libretasks.app.controller.Event;
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.events.GpsFixAcquiredEvent;
+import libretasks.app.controller.events.GpsFixLostEvent;
 import libretasks.app.controller.events.LocationChangedEvent;
 import libretasks.app.controller.util.DataTypeValidationException;
 
@@ -49,7 +53,7 @@ import libretasks.app.controller.util.DataTypeValidationException;
  * The class is responsible for communication with the Location Service. It provides access to
  * Location Services External Attribute, as well as Initiates Location Change Intents.
  */
-public class LocationMonitor implements SystemServiceEventMonitor {
+public class LocationMonitor extends BroadcastReceiver implements SystemServiceEventMonitor {
   private static final String SYSTEM_SERVICE_NAME = "LOCATION_SERVICE";
   private static final String MONITOR_NAME = "LocationMonitor";
   private static OmniArea lastLocation;
@@ -58,8 +62,35 @@ public class LocationMonitor implements SystemServiceEventMonitor {
   /** Minimum change in location(in meters). Default value is 50 meters. */
   private static final float MIN_PROVIDER_UPDATE_DISTANCE = 50;
   private static final String PROVIDER = LocationManager.GPS_PROVIDER;
+  
+  // Constants defined in com.android.internal.location.GpsLocationProvider
+  /**
+   * Broadcast intent action indicating that the GPS has either been
+   * enabled or disabled. An intent extra provides this state as a boolean,
+   * where {@code true} means enabled.
+   * @see #EXTRA_ENABLED
+   */
+  public static final String GPS_ENABLED_CHANGE_ACTION = "android.location.GPS_ENABLED_CHANGE";
+  
+  /**
+   * Broadcast intent action indicating that the GPS has either started or
+   * stopped receiving GPS fixes. An intent extra provides this state as a
+   * boolean, where {@code true} means that the GPS is actively receiving fixes.
+   * @see #EXTRA_ENABLED
+   */
+  public static final String GPS_FIX_CHANGE_ACTION = "android.location.GPS_FIX_CHANGE";
+  
+  /**
+   * The lookup key for a boolean that indicates whether GPS is enabled or
+   * disabled. {@code true} means GPS is enabled. Retrieve it with
+   * {@link android.content.Intent#getBooleanExtra(String,boolean)}.
+   */
+  public static final String EXTRA_ENABLED = "enabled";
 
   private Context context;
+  
+  /** Whether we currently have a fix. */
+  private boolean hasFix = false;
   
   public LocationMonitor(Context context) {
     this.context = context;
@@ -74,11 +105,16 @@ public class LocationMonitor implements SystemServiceEventMonitor {
     }
     lm.requestLocationUpdates(PROVIDER, MIN_PROVIDER_UPDATE_INTERVAL, MIN_PROVIDER_UPDATE_DISTANCE,
         locationListener);
+    IntentFilter intentFilter = new IntentFilter();
+    intentFilter.addAction(GPS_ENABLED_CHANGE_ACTION);
+    intentFilter.addAction(GPS_FIX_CHANGE_ACTION);
+    context.registerReceiver(this, intentFilter);
   }
 
   public void stop() {
     LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     lm.removeUpdates(locationListener);
+    context.unregisterReceiver(this);
   }
 
   private final LocationListener locationListener = new LocationListener() {
@@ -135,5 +171,27 @@ public class LocationMonitor implements SystemServiceEventMonitor {
 
   public String getSystemServiceName() {
     return SYSTEM_SERVICE_NAME;
+  }
+
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    if (GPS_ENABLED_CHANGE_ACTION.equals(intent.getAction()) &&
+        intent.hasExtra(EXTRA_ENABLED) &&
+        !intent.getBooleanExtra(EXTRA_ENABLED, false)) {
+      // reset fix when GPS is released
+      hasFix = false;
+    } else if (GPS_FIX_CHANGE_ACTION.equals(intent.getAction())) {
+      boolean newFix = (intent.getBooleanExtra(EXTRA_ENABLED, hasFix));
+      if (newFix && !hasFix) {
+        // fix acquired
+        Intent outIntent = new Intent(GpsFixAcquiredEvent.ACTION_NAME);
+        context.sendBroadcast(outIntent);    
+      } else if (!newFix && hasFix) {
+        // fix lost
+        Intent outIntent = new Intent(GpsFixLostEvent.ACTION_NAME);
+        context.sendBroadcast(outIntent);    
+      }
+      hasFix = newFix;
+    }
   }
 }
