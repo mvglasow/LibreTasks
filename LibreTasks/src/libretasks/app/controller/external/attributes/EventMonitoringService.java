@@ -61,7 +61,8 @@ public class EventMonitoringService extends Service {
       new TimeMonitor(this),
       new NetworkStateMonitor(this),
       new BluetoothMonitor(this),
-      new ConnectivityMonitor(this)
+      new ConnectivityMonitor(this),
+      new BatteryMonitor(this)
   };
 
   // Keep track if already running or not

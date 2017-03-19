@@ -34,6 +34,7 @@
 package libretasks.app.view.simple.viewitem;
 
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.datatypes.OmniBatteryLevel;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
@@ -65,6 +66,7 @@ public class ViewItemFactory {
   public final long WEEKDAY_DATATYPE_DB_ID;
   public final long BLUETOOTH_DEVICE_DATATYPE_DB_ID;
   public final long WIFI_DATATYPE_DB_ID;
+  public final long BATTERY_LEVEL_DATATYPE_DB_ID;
 
   private ViewItemFactory() {
     DataTypeIDLookup lookup = UIDbHelperStore.instance().getDatatypeLookup();
@@ -80,6 +82,7 @@ public class ViewItemFactory {
     WEEKDAY_DATATYPE_DB_ID = lookup.getDataTypeID(OmniDayOfWeek.DB_NAME);
     BLUETOOTH_DEVICE_DATATYPE_DB_ID = lookup.getDataTypeID(OmniBluetoothDevice.DB_NAME);
     WIFI_DATATYPE_DB_ID = lookup.getDataTypeID(OmniWifi.DB_NAME);
+    BATTERY_LEVEL_DATATYPE_DB_ID = lookup.getDataTypeID(OmniBatteryLevel.DB_NAME);
   }
 
   /**
@@ -127,6 +130,8 @@ public class ViewItemFactory {
       viewItem = new BluetoothDeviceViewItem(itemID, dataTypeID, activity);
     } else if (dataTypeID == WIFI_DATATYPE_DB_ID) {
         viewItem = new WifiViewItem(itemID, dataTypeID, activity);
+    } else if (dataTypeID == BATTERY_LEVEL_DATATYPE_DB_ID) {
+      viewItem = new BatteryLevelViewItem(itemID, dataTypeID, activity);
     } else {
       throw new IllegalArgumentException("Unknown Datatype ID: " + dataTypeID);
     }

@@ -38,6 +38,7 @@ import android.widget.TextView;
 import libretasks.app.R;
 import libretasks.app.controller.datatypes.DataType;
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.datatypes.OmniBatteryLevel;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
@@ -143,6 +144,9 @@ public class RuleFilterViewFactory {
     	RuleBuilder.instance().setChosenRuleFilter(filter);
     	activity.setResult(Activity.RESULT_OK);
     	activity.finish();
+    } else if (filterDbID == AllFilterID.BATTERY_RISEN_TO || filterDbID == AllFilterID.BATTERY_DROPPED_TO) {
+        viewItemGroup.addViewItem(viewItemFactory.create(uiID, viewItemFactory.BATTERY_LEVEL_DATATYPE_DB_ID,
+            activity), initData);
     } else {
       throw new IllegalArgumentException("Unknown filter ID: " + filterDbID);
     }
@@ -234,5 +238,9 @@ public class RuleFilterViewFactory {
             .getDataFilterID(OmniCheckBoxInput.DB_NAME, null, OmniCheckBoxInput.Filter.IS_TRUE.toString());
     public static final long CHECK_IS_FALSE = UIDbHelperStore.instance().getFilterLookup()
             .getDataFilterID(OmniCheckBoxInput.DB_NAME, null, OmniCheckBoxInput.Filter.IS_FALSE.toString());
+    public static final long BATTERY_RISEN_TO = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniBatteryLevel.DB_NAME, OmniBatteryLevel.Filter.RISEN_TO.toString());
+    public static final long BATTERY_DROPPED_TO = UIDbHelperStore.instance().getFilterLookup()
+            .getDataFilterID(OmniBatteryLevel.DB_NAME, OmniBatteryLevel.Filter.DROPPED_TO.toString());
   }
 }

@@ -33,6 +33,7 @@
  *******************************************************************************/
 package libretasks.app.controller;
 
+import libretasks.app.controller.events.BatteryLevelEvent;
 import libretasks.app.controller.events.BluetoothConnectedEvent;
 import libretasks.app.controller.events.BluetoothDisconnectedEvent;
 import libretasks.app.controller.events.GpsFixAcquiredEvent;
@@ -108,6 +109,8 @@ public class IntentParser {
         event = new GpsFixAcquiredEvent(intent);
     } else if (intent.getAction().equals(GpsFixLostEvent.ACTION_NAME)) {
         event = new GpsFixLostEvent(intent);
+    } else if (intent.getAction().equals(BatteryLevelEvent.ACTION_NAME)) {
+        event = new BatteryLevelEvent(intent);
     } else {
       for (SystemEvent e : SystemEvent.values()) {
         if (intent.getAction().equals(e.ACTION_NAME)) {

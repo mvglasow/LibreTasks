@@ -61,6 +61,7 @@ import libretasks.app.controller.actions.TurnOnWifiAction;
 import libretasks.app.controller.actions.TurnOffBluetoothAction;
 import libretasks.app.controller.actions.TurnOnBluetoothAction;
 import libretasks.app.controller.datatypes.OmniArea;
+import libretasks.app.controller.datatypes.OmniBatteryLevel;
 import libretasks.app.controller.datatypes.OmniBluetoothDevice;
 import libretasks.app.controller.datatypes.OmniCheckBoxInput;
 import libretasks.app.controller.datatypes.OmniDate;
@@ -71,6 +72,7 @@ import libretasks.app.controller.datatypes.OmniText;
 import libretasks.app.controller.datatypes.OmniTimePeriod;
 import libretasks.app.controller.datatypes.OmniUserAccount;
 import libretasks.app.controller.datatypes.OmniWifi;
+import libretasks.app.controller.events.BatteryLevelEvent;
 import libretasks.app.controller.events.BluetoothConnectedEvent;
 import libretasks.app.controller.events.BluetoothDisconnectedEvent;
 import libretasks.app.controller.events.GpsFixAcquiredEvent;
@@ -150,6 +152,8 @@ public class DbMigration {
       addGlobalHeadsetAttributes(db);
     case 26:
       addGpsFixEvents(db);
+    case 27:
+      addBatteryLevelEvent(db);
 
       /*
        * Insert new versions before this line and do not forget to update {@code
@@ -1089,5 +1093,27 @@ public class DbMigration {
     RegisteredEventDbAdapter registeredEventDbAdapter = new RegisteredEventDbAdapter(db);
     registeredEventDbAdapter.insert(GpsFixAcquiredEvent.EVENT_NAME, appId);
     registeredEventDbAdapter.insert(GpsFixLostEvent.EVENT_NAME, appId);
+  }
+  
+  private static void addBatteryLevelEvent(SQLiteDatabase db) {
+    DataTypeDbAdapter dataTypeDbAdapter = new DataTypeDbAdapter(db);
+    long dataTypeIdBattLevel = dataTypeDbAdapter.insert(OmniBatteryLevel.DB_NAME,
+    		OmniBatteryLevel.class.getName());
+  
+    RegisteredAppDbAdapter appDbAdapter = new RegisteredAppDbAdapter(db);
+    long appId = appDbAdapter.insert(BatteryLevelEvent.APPLICATION_NAME, "", true);
+  
+    RegisteredEventDbAdapter registeredEventDbAdapter = new RegisteredEventDbAdapter(db);
+    long eventIdBattLevelChanged = registeredEventDbAdapter.insert(BatteryLevelEvent.EVENT_NAME, appId);
+  
+    RegisteredEventAttributeDbAdapter eventAttributeDbAdapter = new RegisteredEventAttributeDbAdapter(db);
+    eventAttributeDbAdapter.insert(BatteryLevelEvent.ATTRIBUTE_BATTERY_LEVEL,
+  		  eventIdBattLevelChanged, dataTypeIdBattLevel);
+  
+    DataFilterDbAdapter dataFilterDbAdapter = new DataFilterDbAdapter(db);
+    dataFilterDbAdapter.insert(OmniBatteryLevel.Filter.RISEN_TO.toString(),
+    	  OmniBatteryLevel.Filter.RISEN_TO.displayName, dataTypeIdBattLevel, dataTypeIdBattLevel);
+    dataFilterDbAdapter.insert(OmniBatteryLevel.Filter.DROPPED_TO.toString(),
+  		  OmniBatteryLevel.Filter.DROPPED_TO.displayName, dataTypeIdBattLevel, dataTypeIdBattLevel);
   }
 }

@@ -68,6 +68,7 @@
     <string name="save_rule">Save Rule</string>
     <string name="rule_saved">Rule saved successfully.</string>
     <string name="libretasks_is_disabled_alert">LibreTasks is disabled.  Enable it for rules to take effect.</string>
+    <string name="bad_percentage">Please enter a value from 0 to 100.</string>
 
     <!--  Help Dialog Texts -->
     <string name="help_title">LibreTasks Help</string>

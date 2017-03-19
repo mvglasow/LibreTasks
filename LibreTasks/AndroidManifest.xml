@@ -271,6 +271,9 @@
 			<intent-filter>
 				<action android:name="GPS_FIX_LOST"></action>
 			</intent-filter>
+			<intent-filter>
+				<action android:name="BATTERY_LEVEL_CHANGED"></action>
+			</intent-filter>
 		</receiver>
 
 		<!-- Services that run to fire actions -->
