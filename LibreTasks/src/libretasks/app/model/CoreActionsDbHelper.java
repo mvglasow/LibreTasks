@@ -63,6 +63,7 @@ import libretasks.app.controller.actions.TurnOnWifiAction;
 import libretasks.app.controller.actions.TurnOffBluetoothAction;
 import libretasks.app.controller.actions.TurnOnBluetoothAction;
 import libretasks.app.controller.actions.UpdateTwitterStatusAction;
+import libretasks.app.controller.actions.PowerOffAction;
 import libretasks.app.controller.util.ExceptionMessageMap;
 import libretasks.app.controller.util.Logger;
 import libretasks.app.controller.util.OmnidroidException;
@@ -184,6 +185,9 @@ public class CoreActionsDbHelper {
     } else if (appName.equals(UpdateTwitterStatusAction.APP_NAME)
         && actionName.equals(UpdateTwitterStatusAction.ACTION_NAME)) {
       return new UpdateTwitterStatusAction(actionParams);
+    } else if (appName.equals(PowerOffAction.APP_NAME)
+            && actionName.equals(PowerOffAction.ACTION_NAME)) {
+        return new PowerOffAction(actionParams);
     } else if (appName.equals(SpeechAction.APP_NAME)
         && actionName.equals(SpeechAction.ACTION_NAME)) {
       return new SpeechAction(actionParams);
