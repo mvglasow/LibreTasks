@@ -34,9 +34,11 @@
 package libretasks.app.controller;
 
 import java.util.List;
-
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import libretasks.app.controller.util.ExceptionMessageMap;
 import libretasks.app.controller.util.Logger;
 import libretasks.app.controller.util.OmnidroidException;
@@ -57,16 +59,21 @@ public class ActionExecuter {
    * @throws OmnidroidException
    *           if an illegal execution method is specified
    */
+  @SuppressLint("NewApi")
   public static void executeActions(Context context, List<Action> actions)
       throws OmnidroidException {
     for (Action action : actions) {
+      Intent intent = action.getIntent();
+      if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT)) {
+        intent.setPackage(context.getPackageName());
+      }
       try {
         if (action.getExecutionMethod().equals(Action.BY_ACTIVITY)) {
-          context.startActivity(action.getIntent());
+          context.startActivity(intent);
         } else if (action.getExecutionMethod().equals(Action.BY_SERVICE)) {
-          context.startService(action.getIntent());
+          context.startService(intent);
         } else if (action.getExecutionMethod().equals(Action.BY_BROADCAST)) {
-          context.sendBroadcast(action.getIntent());
+          context.sendBroadcast(intent);
         } else {
           // Illegal Action execution method.
           throw new OmnidroidException(120001, ExceptionMessageMap.getMessage(new Integer(120001)
